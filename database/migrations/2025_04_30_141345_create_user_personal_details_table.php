@@ -13,11 +13,12 @@ return new class extends Migration
         Schema::create('user_personal_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->string('full_name');
+            $table->string('profile_picture')->nullable();
+            
             $table->integer('age');
             $table->enum('gender', ['male', 'female', 'other']);
-            $table->float('weight');
-            $table->float('height');
+            $table->float('weight'); // in kg
+            $table->float('height'); // in cm
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

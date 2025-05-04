@@ -13,12 +13,9 @@ return new class extends Migration
     {
         Schema::create('workouts', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('muscle_id');
             $table->string('name');
             $table->string('video_male_url')->nullable();
             $table->string('video_female_url')->nullable();
-
-            $table->foreign('muscle_id')->references('id')->on('muscles')->onDelete('cascade');
         });
     }
     public function down(): void {
