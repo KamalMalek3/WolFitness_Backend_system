@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 
@@ -9,9 +10,11 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        //
+        $users = User::all();
+        return response()->json($users);
     }
 
     /**
@@ -19,30 +22,76 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
 
+        $user = User::createUser($validatedData);
+
+        return response()->json($user, 201);
+    }
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $user = User::getUserById($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user);
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $user = User::getUserById($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user);
+    }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            'full_name' => 'sometimes|required|string|max:255',
+            'phone_number' => 'sometimes|required|string|max:15',
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
+            'password' => 'sometimes|required|string|min:8|confirmed',
+        ]);
 
+        $user = User::updateUser($id, $validatedData);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user);
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $user = User::deleteUser($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json(['message' => 'User deleted successfully']);
     }
+   
 }

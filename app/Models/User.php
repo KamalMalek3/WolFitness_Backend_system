@@ -25,6 +25,34 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public static function createUser(array $data)
+    {
+        return self::create($data);
+    }
+
+    public static function getUserById(string $id)
+    {
+        return self::find($id);
+    }
+
+    public static function updateUser(string $id, array $data)
+    {
+        $user = self::find($id);
+        if ($user) {
+            $user->update($data);
+            return $user;
+        }
+        return null;
+    }
+
+    public static function deleteUser(string $id)
+    {
+        $user = self::find($id);
+        if ($user) {
+            return $user->delete();
+        }
+        return false;
+    }
     public function personalDetails()
     {
         return $this->hasOne(UserPersonalDetail::class);

@@ -18,6 +18,42 @@ class Workout extends Model
         'video_female_url',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+    public static function createWorkout(array $data)
+    {
+        return self::create($data);
+    }
+
+    public static function getWorkoutById(string $id)
+    {
+        return self::find($id);
+    }
+    public static function updateWorkout(string $id, array $data)
+    {
+        $workout = self::find($id);
+        if ($workout) {
+            $workout->update($data);
+            return $workout;
+        }
+        return null;
+    }
+
+    public static function deleteWorkout(string $id)
+    {
+        $workout = self::find($id);
+        if ($workout) {
+            return $workout->delete();
+        }
+        return false;
+    }
+    /**
+     * Get the weekly schedules for the workout.
+     */
+    
+
     public function weeklySchedules()
     {
         return $this->hasMany(WeeklySchedule::class);
