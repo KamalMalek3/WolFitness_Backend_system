@@ -27,10 +27,28 @@ class Workout extends Model
         return self::create($data);
     }
 
-    public static function getWorkoutById(string $id)
-    {
-        return self::find($id);
-    }
+    /**
+     * Get the video URLs for the workout based on user gender.
+     * take user_id, get the user_gender from the user personal details table
+     * and return the video URL based on the gender
+     **/
+
+     public function getVideoUrl($userId)
+     {
+         $user = User::find($userId);
+ 
+         if ($user) {
+             $gender = UserPersonalDetail::where('user_id', $userId)->first()->gender;
+             return $gender === 'male' ? $this->video_male_url : $this->video_female_url;
+         }
+         return null;
+     }
+
+    //get workout by user_id
+
+
+
+
     public static function updateWorkout(string $id, array $data)
     {
         $workout = self::find($id);
@@ -49,6 +67,10 @@ class Workout extends Model
         }
         return false;
     }
+
+    
+    
+
     /**
      * Get the weekly schedules for the workout.
      */

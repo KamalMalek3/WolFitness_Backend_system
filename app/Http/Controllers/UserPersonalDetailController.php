@@ -111,4 +111,87 @@ public function getUserBMI($userId)
 
 }
 
+/**
+ * Get the authenticated user's personal details
+ */
+public function getCurrentUserDetails(Request $request)
+{
+    $user = $request->user();
+    $personalDetail = $user->personalDetails;
+    
+    if (!$personalDetail) {
+        return response()->json([
+            'message' => 'No personal details found'
+        ], 404);
+    }
+    
+    return response()->json($personalDetail);
+}
+
+/**
+ * Store personal details for the authenticated user
+ */
+public function storeCurrentUserDetails(Request $request)
+{
+    $user = $request->user();
+    
+    // Check if user already has personal details
+    if ($user->personalDetails) {
+        return response()->json([
+            'message' => 'Personal details already exist. Use update instead.'
+        ], 422);
+    }
+    
+    $validatedData = $request->validate([
+        'profile_picture' => 'nullable|string',
+        'age' => 'required|integer|min:1|max:120',
+        'gender' => 'required|in:male,female,other',
+        'weight' => 'required|numeric|min:1|max:500',
+        'height' => 'required|numeric|min:1|max:300',
+    ]);
+    
+    $validatedData['user_id'] = $user->id;
+    
+    $personalDetail = UserPersonalDetail::createUserPersonalDetail($validatedData);
+    
+    return response()->json($personalDetail, 201);
+}
+
+/**
+ * Update the authenticated user's personal details
+ */
+public function updateCurrentUserDetails(Request $request)
+{
+    $user = $request->user();
+    $personalDetail = $user->personalDetails;
+    
+    if (!$personalDetail) {
+        return response()->json([
+            'message' => 'No personal details found. Create them first.'
+        ], 404);
+    }
+    
+    $validatedData = $request->validate([
+        'profile_picture' => 'nullable|string',
+        'age' => 'nullable|integer|min:1|max:120',
+        'gender' => 'nullable|in:male,female,other',
+        'weight' => 'nullable|numeric|min:1|max:500',
+        'height' => 'nullable|numeric|min:1|max:300',
+    ]);
+    
+    $personalDetail = UserPersonalDetail::updateUserPersonalDetail($personalDetail->id, $validatedData);
+    
+    return response()->json($personalDetail);
+}
+
+/**
+ * Get the authenticated user's BMI
+ */
+public function getCurrentUserBMI(Request $request)
+{
+    $user = $request->user();
+    
+    return $this->getUserBMI($user->id);
+}
+
 }

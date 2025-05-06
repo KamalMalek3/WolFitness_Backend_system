@@ -56,16 +56,6 @@ class UserPersonalDetail extends Model
     /**
      * Get the user that owns the personal detail.
      */
-    // This method defines the inverse relationship between UserPersonalDetail and User
-    // It indicates that each UserPersonalDetail belongs to a single User
-    // The 'user_id' foreign key in the UserPersonalDetail table references the id in the User table
-    // This allows you to access the User associated with a UserPersonalDetail instance
-    // For example, if you have a UserPersonalDetail instance $detail, you can get the associated User with $detail->user
-    // The 'user' method defines the relationship between UserPersonalDetail and User
-    // The 'user' method returns the User model associated with the UserPersonalDetail instance
-    // This method is used to define the relationship between UserPersonalDetail and User
-    // The 'user' method is used to define the relationship between UserPersonalDetail and User
-   
 
     public function user()
     {

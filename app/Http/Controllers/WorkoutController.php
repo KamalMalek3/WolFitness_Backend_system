@@ -48,29 +48,6 @@ class WorkoutController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $workout = Workout::find($id);
-
-        if (!$workout) {
-            return response()->json(['message' => 'Workout not found'], 404);
-        }
-
-        $validatedData = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'duration' => 'sometimes|integer',
-            'intensity' => 'sometimes|string|max:50',
-        ]);
-
-        $workout->update($validatedData);
-
-        return response()->json($workout);
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)

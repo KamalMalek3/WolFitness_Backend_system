@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -93,5 +93,33 @@ class UserController extends Controller
 
         return response()->json(['message' => 'User deleted successfully']);
     }
-   
+
+    /**
+     * Update the authenticated user's profile information
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        
+        $validatedData = $request->validate([
+            'full_name' => 'nullable|string|max:255',
+            'phone_number' => 'nullable|string|max:15',
+            'email' => 'nullable|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+        
+        // Hash password if provided
+        if (isset($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        }
+        
+        // Filter out null values
+        $validatedData = array_filter($validatedData, function ($value) {
+            return $value !== null;
+        });
+        
+        $user = User::updateUser($user->id, $validatedData);
+        
+        return response()->json($user);
+    }
 }
