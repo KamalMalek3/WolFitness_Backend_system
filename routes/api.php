@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserPersonalDetailController;
+use App\Http\Controllers\UserDetailController;
 use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\WorkoutController;
@@ -27,10 +27,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/profile', [UserController::class, 'updateProfile']);
 
     // Personal Details
-    Route::get('/user/personal-details',  [UserPersonalDetailController::class, 'getUserDetails']);
-    Route::post('/user/personal-details', [UserPersonalDetailController::class, 'storeUserDetails']);
-    Route::put('/user/personal-details',  [UserPersonalDetailController::class, 'updateUserDetails']);
-    Route::get('/user/bmi',               [UserPersonalDetailController::class, 'getCurrentUserBMI']);
+    Route::get('/user-details',         [UserDetailController::class, 'index']);
+    Route::post('/user-details',        [UserDetailController::class, 'store']);
+    Route::get('/user-details/{id}',    [UserDetailController::class, 'show']);
+    Route::put('/user-details/{id}',    [UserDetailController::class, 'update']);
+    Route::delete('/user-details/{id}', [UserDetailController::class, 'destroy']);
+    Route::get('/user/bmi',               [UserDetailController::class, 'getCurrentUserBMI']);
 
     // User Progress
     Route::get('/progress',        [UserProgressController::class, 'index']);
