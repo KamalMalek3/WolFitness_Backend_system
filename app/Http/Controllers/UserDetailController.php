@@ -35,7 +35,7 @@ class UserDetailController extends Controller
 
     public function show($id)
     {
-        $detail = UserPersonalDetail::getUserPersonalDetailById($id);
+        $detail = UserPersonalDetail::getUserPersonalDetailsByUserId($id)->first();
         if (!$detail || $detail->user_id !== Auth::id()) {
             return response()->json(['message' => 'Not found'], 404);
         }
@@ -44,11 +44,14 @@ class UserDetailController extends Controller
 
     public function update(Request $request, $id)
     {
-        $detail = UserPersonalDetail::getUserPersonalDetailById($id);
+        $detail = UserPersonalDetail::getUserPersonalDetailsByUserId($id)->first();
+        
         if (!$detail || $detail->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Not found'], 404);
+            
+            // log details and auth id for debugging
+            return response()->json(['message' => 'Not found!'], 404);
         }
-
+        
         $validated = $request->validate([
             'profile_picture' => 'nullable|string',
             'age'             => 'nullable|integer',
@@ -57,7 +60,9 @@ class UserDetailController extends Controller
             'height'          => 'nullable|numeric',
         ]);
 
-        $updated = UserPersonalDetail::updateUserPersonalDetail($id, $validated);
+        
+
+        $updated = UserPersonalDetail::updateUserPersonalDetail($detail->id, $validated);
 
         return response()->json([
             'message' => 'Personal detail updated',
@@ -67,12 +72,33 @@ class UserDetailController extends Controller
 
     public function destroy($id)
     {
-        $detail = UserPersonalDetail::getUserPersonalDetailById($id);
+        $detail = UserPersonalDetail::getUserPersonalDetailsByUserId($id)->first();
         if (!$detail || $detail->user_id !== Auth::id()) {
             return response()->json(['message' => 'Not found'], 404);
         }
 
-        UserPersonalDetail::deleteUserPersonalDetail($id);
+        UserPersonalDetail::deleteUserPersonalDetail($detail->id);
         return response()->json(['message' => 'Personal detail deleted'], 200);
+    }
+
+    //get user bmi
+    public function getCurrentUserBMI()
+    {
+        $user = Auth::user();
+        $detail = UserPersonalDetail::where('user_id', $user->id)->first();
+
+        if (!$detail) {
+            return response()->json(['message' => 'User personal detail not found'], 404);
+        }
+
+        $weight = $detail->weight;
+        $height = $detail->height;
+
+        if ($weight && $height) {
+            $bmi = $weight / (($height / 100) ** 2);
+            return response()->json(['bmi' => round($bmi, 2)], 200);
+        }
+
+        return response()->json(['message' => 'Weight or height not set'], 400);
     }
 }

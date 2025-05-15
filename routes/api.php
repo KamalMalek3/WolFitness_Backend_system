@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user-details/{id}',    [UserDetailController::class, 'show']);
     Route::put('/user-details/{id}',    [UserDetailController::class, 'update']);
     Route::delete('/user-details/{id}', [UserDetailController::class, 'destroy']);
-    Route::get('/user/bmi',               [UserDetailController::class, 'getCurrentUserBMI']);
+    Route::get('/user/bmi',             [UserDetailController::class, 'getCurrentUserBMI']);
 
     // User Progress
     Route::get('/progress',        [UserProgressController::class, 'index']);

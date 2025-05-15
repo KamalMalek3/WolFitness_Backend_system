@@ -22,7 +22,7 @@ class UserPersonalDetail extends Model
     ];
 
     protected $hidden = [
-        'user_id',
+        
     ];
 
     public static function createUserPersonalDetail(array $data)
@@ -33,6 +33,11 @@ class UserPersonalDetail extends Model
     public static function getUserPersonalDetailById(string $id)
     {
         return self::find($id);
+    }
+
+    public static function getUserPersonalDetailsByUserId(string $userId)
+    {
+        return self::where('user_id', $userId)->get();
     }
 
     public static function updateUserPersonalDetail(string $id, array $data)
