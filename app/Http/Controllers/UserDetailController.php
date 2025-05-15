@@ -42,33 +42,33 @@ class UserDetailController extends Controller
         return response()->json($detail, 200);
     }
 
-    public function update(Request $request, $id)
-    {
-        $detail = UserPersonalDetail::getUserPersonalDetailsByUserId($id)->first();
-        
-        if (!$detail || $detail->user_id !== Auth::id()) {
-            
-            // log details and auth id for debugging
-            return response()->json(['message' => 'Not found!'], 404);
-        }
-        
-        $validated = $request->validate([
-            'profile_picture' => 'nullable|string',
-            'age'             => 'nullable|integer',
-            'gender'          => 'nullable|string',
-            'weight'          => 'nullable|numeric',
-            'height'          => 'nullable|numeric',
-        ]);
+    public function update(Request $request)
+{
+    // 1) Fetch the detail record for the logged-in user
+    $detail = UserPersonalDetail::where('user_id', Auth::id())->first();
 
-        
-
-        $updated = UserPersonalDetail::updateUserPersonalDetail($detail->id, $validated);
-
-        return response()->json([
-            'message' => 'Personal detail updated',
-            'data'    => $updated
-        ], 200);
+    if (! $detail) {
+        return response()->json(['message' => 'Not found!'], 404);
     }
+
+    // 2) Validate only what they’re allowed to change
+    $validated = $request->validate([
+        'profile_picture' => 'nullable|string',
+        'age'             => 'nullable|integer',
+        'gender'          => 'nullable|string',
+        'weight'          => 'nullable|numeric',
+        'height'          => 'nullable|numeric',
+    ]);
+
+    // 3) Apply the update
+    $updated = UserPersonalDetail::updateUserPersonalDetail($detail->id, $validated);
+
+    // 4) Return the fresh record
+    return response()->json([
+        'message' => 'Personal detail updated',
+        'data'    => $updated,
+    ], 200);
+}
 
     public function destroy($id)
     {

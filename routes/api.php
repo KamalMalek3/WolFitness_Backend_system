@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user-details',         [UserDetailController::class, 'index']);
     Route::post('/user-details',        [UserDetailController::class, 'store']);
     Route::get('/user-details/{id}',    [UserDetailController::class, 'show']);
-    Route::put('/user-details/{id}',    [UserDetailController::class, 'update']);
+    Route::put('/user-details',         [UserDetailController::class, 'update']);
     Route::delete('/user-details/{id}', [UserDetailController::class, 'destroy']);
     Route::get('/user/bmi',             [UserDetailController::class, 'getCurrentUserBMI']);
 
